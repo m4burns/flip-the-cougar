@@ -5,15 +5,13 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Model exposing (..)
 import Config exposing (..)
-
-bigCougar =
-  style
-    [ ("backgroundColor", "red") ]
+import Style exposing (..)
 
 view model =
   case model.state of
     Pairing ->
-      div [ bigCougar ] [
+      div [] [
+        img [ src "resources/cougar1.svg", bigCougar ] [],
         div [] [ text model.message ],
         div [] [ text "Waiting for an opponent..." ]
       ]
@@ -25,9 +23,25 @@ view model =
         deltaScore = round ( 2^( deltaTime / timeDivisor ) )
       in
         div [] [
-          div [] [ b [] [ text (toString deltaScore) ] ],
-          div [] [ b [] [ text model.message ] ],
-          button [ onClick Flip ] [ text "FLIP THE COUGAR" ]
+          img [ src "resources/cougar2-in.svg", topCougar ] [],
+          img [ src "resources/cougar2-out.svg", bottomCougar ] [],
+          div [ scoreDisplay, onClick Flip ] [
+            div [ scoreContent ] [
+              div [] [
+                text "Your score: ",
+                text (toString model.score)
+              ],
+              div [] [
+                text "You stand to win or lose: ",
+                text (toString deltaScore)
+              ],
+              div [] [
+                b [] [
+                  text "Press SPACE to FLIP THE COUGAR!"
+                ]
+              ]
+            ]
+          ]
         ]
     Error ->
       div [] [

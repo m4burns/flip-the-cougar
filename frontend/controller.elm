@@ -3,11 +3,15 @@ module Controller exposing (..)
 import Time exposing (Time, millisecond)
 import String exposing (words, toInt)
 import WebSocket
+import Keyboard
+import Char
 import Model exposing (..)
 import Config exposing (..)
 
 update msg {state, message, score, roundStart, now} =
   case msg of
+    None ->
+      (Model state message score roundStart now, Cmd.none)
     Flip ->
       (Model state message score roundStart now,
         if state == Game then
@@ -43,9 +47,19 @@ update msg {state, message, score, roundStart, now} =
         _ ->
           (Model Error "bad server command string" score 0 0, Cmd.none)
 
+mapKeyPress : Keyboard.KeyCode -> Msg
+mapKeyPress key =
+  case Char.fromCode key of
+    ' ' ->
+      Flip
+    _ ->
+      None
+  
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch [
     Time.every millisecond Tick,
-    WebSocket.listen server Recv
+    WebSocket.listen server Recv,
+    Keyboard.presses mapKeyPress
   ]
+

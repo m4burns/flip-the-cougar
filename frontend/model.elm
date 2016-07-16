@@ -15,6 +15,7 @@ type alias Model = {
 type Msg = Flip
          | Tick Time
          | Recv String
+         | None
          
 init : (Model, Cmd Msg)
 init =

@@ -5,6 +5,7 @@ RUN apk add --no-cache libedit && \
     typed-racket \
     aws \
     xrepl \
+    rfc6455 \
     || true
 
 CMD ["racket", "-il", "xrepl"]

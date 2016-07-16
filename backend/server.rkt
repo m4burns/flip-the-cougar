@@ -12,6 +12,7 @@
 (define MATCH-WAIT 1)
 (define MATCH-TIMEOUT 1)
 (define ROUND-LENGTH 10000)
+(define TIME-DIVISOR 500)
 
 (define (make-ai)
   (let ([in   (make-async-channel)]
@@ -55,6 +56,9 @@
           (match-timeout-poll))
         (loop)))))
 
+(define (score-scale end start)
+  (round (inexact->exact (expt 2 (/ (- end start) TIME-DIVISOR)))))
+
 (define (play a b)
   (cond
     [(not ((client-handle-p a) 'status))
@@ -81,7 +85,7 @@
         (enqueue b)]
        [(cons winner 'flip)
         (define loser (if (equal? winner a) b a))
-        (define delta (round (inexact->exact (/ (- (current-inexact-milliseconds) start-time) 50.0))))
+        (define delta (score-scale (current-inexact-milliseconds) start-time))
         (set-client-handle-score! winner (+ (client-handle-score winner) delta))
         (set-client-handle-score! loser  (- (client-handle-score loser) delta))
         (for ([client (list a b)])
